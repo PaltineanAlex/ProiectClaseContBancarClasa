@@ -1,8 +1,10 @@
 package ProiectClaseContBancarScoala;
 
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
-public class Depozit extends Cont{
+public class Depozit extends Cont implements Cloneable, OperatiuniDepozite{
     private Persoana imputernicit;
     private TipDepozit tipDepozit;
     private int codContract;
@@ -52,5 +54,54 @@ public class Depozit extends Cont{
     public String toString() {
         return super.toString() + "\nDepozit{" +
                 imputernicit + ", " + tipDepozit + ", " + codContract + "}" ;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Depozit depozit = (Depozit) o;
+        return codContract == depozit.codContract;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(codContract);
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        Depozit clona = (Depozit) super.clone();
+        clona.setTitular((Persoana) titular.clone());
+        try{
+            clona.setDataDeschidere((Date) dataDeschidere.clone());
+        }catch (Exception ex){}
+        clona.setImputernicit((Persoana)imputernicit.clone());
+        return clona;
+    }
+
+    @Override
+    public void prelungire(ContCurent contCurent) throws Exception {
+        Date dataCurenta = new Date();
+        //get time intoarce numarul de milisecunde trecute de la 1970 GME
+        long nrZile = TimeUnit.MILLISECONDS.toDays(dataCurenta.getTime() - dataDeschidere.getTime());
+        if(nrZile<tipDepozit.getDurataDepozit()){
+            throw new Exception("NU a expirat termenul contractat.");
+        }
+        double dobanda = (valoare * tipDepozit.getRataDobanzii()*nrZile)/(100*365);
+        contCurent.depunereNumerar(dobanda);
+    }
+
+    @Override
+    public void lichidare(ContCurent contCurent) {
+        Date dataCurenta = new Date();
+        long nrZile = TimeUnit.MILLISECONDS.toDays(dataCurenta.getTime() - dataDeschidere.getTime());
+        if(nrZile<tipDepozit.getDurataDepozit()){
+            contCurent.depunereNumerar(valoare);
+        }else{
+            double dobanda = (valoare * tipDepozit.getRataDobanzii()*nrZile)/(100*365);
+            contCurent.depunereNumerar(valoare+dobanda);
+        }
+        esteLichdat=true;
     }
 }

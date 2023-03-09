@@ -65,6 +65,9 @@ public class Persoana implements Cloneable{
 
     @Override
     public Object clone() throws CloneNotSupportedException { //pentru a putea folosi aceasta metoda suprascrisa, trebuie sa implementam interfata Clonable
-        return super.clone(); //intoarce ceea ce furnizeaza clone din superclasa
+        Persoana clona = (Persoana) super.clone();
+        //intoarce ceea ce furnizeaza clone din superclasa
+        clona.setAdresa((Adresa) adresa.clone()); //folosim aceasta initializare la clonare pentru a nu mai avea problema de shallow copy
+        return clona;
     }
 }

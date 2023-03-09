@@ -1,6 +1,6 @@
 package ProiectClaseContBancarScoala;
 
-public class Adresa {
+public class Adresa implements Cloneable{
     private String localitate, judet, strada, numar;
     private int cod;
 
@@ -58,5 +58,10 @@ public class Adresa {
     @Override
     public String toString() { //daca nu suprascriem metoda toString, aceasta va returna hashCodeul
         return "{" + localitate + ", " + judet + ", " + strada + ", " + numar + ", " + cod + "}";
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException { //cream aceasta metoda si aici pentru a nu da de problema de shallow copy de la persoana
+        return super.clone();
     }
 }
