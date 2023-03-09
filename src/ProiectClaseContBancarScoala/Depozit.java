@@ -75,7 +75,7 @@ public class Depozit extends Cont implements Cloneable, OperatiuniDepozite{
         clona.setTitular((Persoana) titular.clone());
         try{
             clona.setDataDeschidere((Date) dataDeschidere.clone());
-        }catch (Exception ex){}
+        }catch (Exception ex){} //try catch redundant, puteam face in schimb un nou obiect de tip Date care sa contina super.clone si pe care sa ii setam data folosind clone
         clona.setImputernicit((Persoana)imputernicit.clone());
         return clona;
     }
@@ -84,7 +84,8 @@ public class Depozit extends Cont implements Cloneable, OperatiuniDepozite{
     public void prelungire(ContCurent contCurent) throws Exception {
         Date dataCurenta = new Date();
         //get time intoarce numarul de milisecunde trecute de la 1970 GME
-        long nrZile = TimeUnit.MILLISECONDS.toDays(dataCurenta.getTime() - dataDeschidere.getTime());
+        long nrZile = TimeUnit.MILLISECONDS.toDays(dataCurenta.getTime() - dataDeschidere.getTime()); //timpul se calculeaza automat in milisecunde
+        //pentru a putea prelucra cu alte UM, trebuie sa convertim
         if(nrZile<tipDepozit.getDurataDepozit()){
             throw new Exception("NU a expirat termenul contractat.");
         }
