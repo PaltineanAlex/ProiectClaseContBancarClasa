@@ -1,9 +1,9 @@
 package ProiectClaseContBancarScoala;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy"); //cream un formator de
@@ -11,6 +11,7 @@ public class Main {
     //instantele de tip string sunt salvate si prelucrate intr-o zona de mem numita constant pool(JVM)
     //problema de shallow copy apare atunci cand incercam sa clonam un obiect din interiorul altui obiect
     private Persoana[] clienti;
+    private List<Persoana> listaClienti = new ArrayList<>(); //List - interfata, ArrayList - clasa
 
     public static void main(String[] args) {
 
@@ -49,7 +50,12 @@ public class Main {
 
             Main app = new Main();
             app.citireClienti();
-            app.printClientList();
+            //app.printClientList();
+            for(Persoana persoana : app.clienti){ //adaugam membrii din vectorul clienti la Lista
+                app.listaClienti.add(persoana);
+            }
+
+            app.printList("Lista_Clienti: ", app.listaClienti);
 
         }catch(Exception e){
             System.err.println(e);
@@ -60,6 +66,13 @@ public class Main {
         System.out.println("Clienti:");
         for(Persoana client : clienti){
             System.out.println(client);
+        }
+    }
+
+    public void printList(String message, List listaClienti){
+        System.out.println(message);
+        for(Object element : listaClienti){
+            System.out.println(element);
         }
     }
 
@@ -80,6 +93,19 @@ public class Main {
                 client.setAdresa(adresa);
                 clienti = Arrays.copyOf(clienti, clienti.length+1); //cream un nou vector, copiem elementele cu dim n+1, iar ultimul elem din vector va fi clientul nou
                 clienti[clienti.length-1] = client;
+            }
+        }catch (Exception ex){
+            System.err.println(ex);
+        }
+    }
+
+    public void citireDepozite(){
+        try(BufferedReader in = new BufferedReader(new FileReader("depozite.csv"))){
+            String row;
+            while((row = in.readLine()) != null){ //cat timp in buffer nu avem null
+                String[] t = row.split(",");
+                Persoana persoana = new Persoana(Long.parseLong(t[0].trim())); //instantiere obiect persoana folosind constructor cu parametru CNP
+                int k = listaClienti.indexOf(persoana); //cauta persoana facand comparatii folosind equals
             }
         }catch (Exception ex){
             System.err.println(ex);

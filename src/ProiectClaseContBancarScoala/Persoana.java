@@ -10,6 +10,10 @@ public class Persoana implements Cloneable{
     public Persoana() {
     }
 
+    public Persoana(long cnp) {
+        this.cnp = cnp;
+    }
+
     public Persoana(String nume, long cnp, Adresa adresa) {
         this.nume = nume;
         this.cnp = cnp;
