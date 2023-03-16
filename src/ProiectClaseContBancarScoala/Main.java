@@ -1,7 +1,7 @@
 package ProiectClaseContBancarScoala;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
+//Serializare: metoda de a transforma continutul unui obiect intr-un sir de octeti
+//Fluxuri utilizate: ObjectOutputStream si FileOutputStream
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -12,6 +12,7 @@ public class Main {
     //problema de shallow copy apare atunci cand incercam sa clonam un obiect din interiorul altui obiect
     private Persoana[] clienti;
     private List<Persoana> listaClienti = new ArrayList<>(); //List - interfata, ArrayList - clasa
+    private List<Depozit> listaDepozite = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -55,7 +56,13 @@ public class Main {
                 app.listaClienti.add(persoana);
             }
 
-            app.printList("Lista_Clienti: ", app.listaClienti);
+            //app.printList("Lista_Clienti: ", app.listaClienti);
+            app.citireDepozite();
+            app.printList("Depozite: ", app.listaDepozite);
+
+            app.depositSave("raportDepozite.csv");
+
+            app.salvare();
 
         }catch(Exception e){
             System.err.println(e);
@@ -106,6 +113,51 @@ public class Main {
                 String[] t = row.split(",");
                 Persoana persoana = new Persoana(Long.parseLong(t[0].trim())); //instantiere obiect persoana folosind constructor cu parametru CNP
                 int k = listaClienti.indexOf(persoana); //cauta persoana facand comparatii folosind equals
+                if(k!=-1){
+                    persoana = listaClienti.get(k);
+                }else{
+                    throw new Exception("CNP Titular eronat!");
+                }
+                Depozit depozit = new Depozit();
+                depozit.setTitular(persoana);
+                depozit.setDataDeschidere(df.parse(t[1].trim()));
+                depozit.setMoneda(Moneda.valueOf(t[2].trim().toUpperCase()));
+                depozit.setValoare(Double.parseDouble(t[3].trim()));
+                depozit.setSucursala(t[4].trim());
+                if(!t[5].trim().isEmpty()){ //daca pe campul imputernicitului nu este null atunci il adaugam
+                    persoana = new Persoana(Long.parseLong(t[5].trim()));
+                    k = listaClienti.indexOf(persoana);
+                    if(k!=-1){
+                        persoana = listaClienti.get(k);
+                    }else{
+                        throw new Exception("CNP Imputernicit eronat!");
+                    }
+                    depozit.setImputernicit(persoana);
+                }
+                depozit.setTipDepozit(TipDepozit.valueOf(t[6].trim().toUpperCase()));
+                depozit.setCodContract(Integer.parseInt(t[7].trim()));
+                listaDepozite.add(depozit);
+            }
+        }catch (Exception ex){
+            System.err.println(ex);
+        }
+    }
+
+    public void depositSave(String fisier){
+        try(PrintWriter out = new PrintWriter(fisier)){ //PrintWriter - flux de output catre un fisier text
+            out.println("Nume,Cod Contract,Valoare");
+            for(Depozit depozit : listaDepozite){
+                out.println(depozit.getTitular().getNume() + ", " + depozit.getCodContract() + ", " + depozit.getValoare());
+            }
+        }catch (Exception ex){
+            System.err.println(ex);
+        }
+    }
+
+    public void salvare(){ //aici putem observa conceptul de serializare(metadate clasa + informatii propriu-zise obiecte)
+        try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("depozite.dat"))){
+            for(Depozit depozit : listaDepozite){
+                out.writeObject(depozit);
             }
         }catch (Exception ex){
             System.err.println(ex);
