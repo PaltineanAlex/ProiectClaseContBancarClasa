@@ -61,8 +61,13 @@ public class Main {
             app.printList("Depozite: ", app.listaDepozite);
 
             app.depositSave("raportDepozite.csv");
-
+            System.out.println("\n\n\n");
+            //Serializare
             app.salvare();
+
+            //Deserializare
+            app.restaurare();
+            app.printList("Lista depozite restaurate: ", app.listaDepozite);
 
         }catch(Exception e){
             System.err.println(e);
@@ -83,7 +88,7 @@ public class Main {
         }
     }
 
-    public void citireClienti(){
+    public void citireClienti(){// citire din fisier csv atunci cand avem redirectat standard inputul in configuration file
         try(Scanner scanner = new Scanner(System.in)){ //incercam sa accesam datele aflate in fisierul csv clienti, plus ca se face automat scanner.close();
             clienti = new Persoana[0]; //scapam de problema initializerii cu NULL implicit si se aloca o zona in heap(scapan de NullPointerException)
             while(scanner.hasNextLine()){
@@ -106,7 +111,7 @@ public class Main {
         }
     }
 
-    public void citireDepozite(){
+    public void citireDepozite(){//citire din fisiere text folosind un buffer
         try(BufferedReader in = new BufferedReader(new FileReader("depozite.csv"))){
             String row;
             while((row = in.readLine()) != null){ //cat timp in buffer nu avem null
@@ -143,7 +148,7 @@ public class Main {
         }
     }
 
-    public void depositSave(String fisier){
+    public void depositSave(String fisier){//salvare continutul unei liste intr-un fisier text
         try(PrintWriter out = new PrintWriter(fisier)){ //PrintWriter - flux de output catre un fisier text
             out.println("Nume,Cod Contract,Valoare");
             for(Depozit depozit : listaDepozite){
@@ -154,10 +159,23 @@ public class Main {
         }
     }
 
-    public void salvare(){ //aici putem observa conceptul de serializare(metadate clasa + informatii propriu-zise obiecte)
-        try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("depozite.dat"))){
+    public void salvare(){ //aici putem observa conceptul de serializare(metadate clasa + informatii propriu-zise obiecte pentru scriere in fisiere binare)
+        //acesta se realizaeaza daca clasa si toate clasele componenete ale acesteia implementeaza interfata de tip flag Serializable
+        try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("depozite.dat"))){ //ObjectOutputStream: Primitive types & objects -> binary files
             for(Depozit depozit : listaDepozite){
                 out.writeObject(depozit);
+            }
+        }catch (Exception ex){
+            System.err.println(ex);
+        }
+    }
+
+    public void restaurare(){
+        listaDepozite.clear();//metoda clear sterge continutul listei
+        try(FileInputStream inputStream = new FileInputStream("depozite.dat");
+        ObjectInputStream in = new ObjectInputStream(inputStream)){
+            while(inputStream.available() != 0){//verificam daca mai sunt obiecte ramase de citit
+                listaDepozite.add((Depozit) in.readObject());//adaugam elementele din fisierul .dat in lista
             }
         }catch (Exception ex){
             System.err.println(ex);

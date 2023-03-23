@@ -1,8 +1,9 @@
 package ProiectClaseContBancarScoala;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public abstract class Cont {
+public abstract class Cont implements Serializable {//implementam Serializable pentru a putea scrie datele din obiect intr-un fisier(inafara de cele statice sau tranzient
     protected Persoana titular;
     protected Date dataDeschidere;
     protected Moneda moneda;

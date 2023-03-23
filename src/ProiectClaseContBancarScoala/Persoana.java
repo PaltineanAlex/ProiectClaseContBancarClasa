@@ -1,8 +1,9 @@
 package ProiectClaseContBancarScoala;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Persoana implements Cloneable{
+public class Persoana implements Cloneable, Serializable {//implementam Serializable pentru a putea scrie datele din obiect intr-un fisier(inafara de cele statice sau tranzient
     private String nume;
     private long cnp;
     private Adresa adresa;

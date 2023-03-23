@@ -1,6 +1,8 @@
 package ProiectClaseContBancarScoala;
 
-public class Adresa implements Cloneable{
+import java.io.Serializable;
+
+public class Adresa implements Cloneable, Serializable {//implementam Serializable pentru a putea scrie datele din obiect intr-un fisier(inafara de cele statice sau tranzient
     private String localitate, judet, strada, numar;
     private int cod;
 
