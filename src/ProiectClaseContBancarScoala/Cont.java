@@ -3,12 +3,16 @@ package ProiectClaseContBancarScoala;
 import java.io.Serializable;
 import java.util.Date;
 
-public abstract class Cont implements Serializable {//implementam Serializable pentru a putea scrie datele din obiect intr-un fisier(inafara de cele statice sau tranzient
+public abstract class Cont implements Serializable, Comparable<Cont> {//implementam Serializable pentru a putea scrie datele din obiect intr-un fisier(inafara de cele statice sau tranzient
     protected Persoana titular;
     protected Date dataDeschidere;
     protected Moneda moneda;
     protected double valoare;
     protected String sucursala;
+    //protected int campNou;//daca schimbam structura unei clase fara sa serializez, la deserializare, acesta nu va avea metadatele necesare si v-a arunca o exceptie
+
+    public static final long serialVersionUID = 1L;//nu se genereazu un cod pentru a determina versiunea, ci noi o setam astfel incat sa putem rula ser/deser
+    //fara a interfere versiunile de serializare
 
     public Cont() {
     }
@@ -74,5 +78,11 @@ public abstract class Cont implements Serializable {//implementam Serializable p
         return "Cont {" +
                  titular + ", " + (dataDeschidere == null ? "" : Main.df.format(dataDeschidere)) +
                 ", " + moneda + ", " + valoare + ", " + sucursala + '}';
+    }
+
+    @Override
+    public int compareTo(Cont o) {
+        //-1 mai mic, 0 egal, 1 mai mare
+        return dataDeschidere.compareTo(o.dataDeschidere);//compareTo deja implementat de clasa Date
     }
 }

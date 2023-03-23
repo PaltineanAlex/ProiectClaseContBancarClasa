@@ -26,6 +26,10 @@ public class Depozit extends Cont implements Cloneable, OperatiuniDepozite{
         this.codContract = codContract;
     }
 
+    public Depozit(int codContract) {
+        this.codContract = codContract;
+    }
+
     public Persoana getImputernicit() {
         return imputernicit;
     }

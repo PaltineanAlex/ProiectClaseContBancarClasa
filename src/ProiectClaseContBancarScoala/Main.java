@@ -63,11 +63,72 @@ public class Main {
             app.depositSave("raportDepozite.csv");
             System.out.println("\n\n\n");
             //Serializare
-            app.salvare();
+            //app.salvare();
 
             //Deserializare
             app.restaurare();
             app.printList("Lista depozite restaurate: ", app.listaDepozite);
+
+            //Cautare
+            Depozit depozit = new Depozit(111);
+            List<Depozit> lista = app.listaDepozite;
+            //metoda contains cauta obiectul dorit in lista prin egalitate (equals si hashCode)
+            System.out.println("\n\n\n" + (lista.contains(depozit) ? "Exista depozitul cu codul " : "Nu exista depozitul cu codul ") + depozit.getCodContract() + ".");
+
+            //Selectie
+            int k = lista.indexOf(depozit);
+            if(k == -1){
+                System.out.println("Nu exista depozitul cu codul " + depozit.getCodContract());
+            }else{
+                System.out.println("Depozitul cu codul " + depozit.getCodContract() + ": ");
+                System.out.println(lista.get(k));
+            }
+
+            //Sortare dupa data deschidere(Comparable)
+            Collections.sort(lista);//putem folosi aceasta metoda deoarece am implementat Comparable in clasa Cont
+            app.printList("\n\nLista depozite sortate dupa data deschidere: ", lista);
+
+            //Sortare dupa numele titularului(Comparator)
+            //Interfata funcitonala este o interfata cu o singura metoda abstracta(cum merge si cu functiile lambda)
+            //Metodele default sunt metode implementate la nivel de interfata
+            Collections.sort(lista, new Comparator<Depozit>() { //putem observa un exemplu de clasa anonima
+                //sortarea se face pe lista curenta, nu pe o copie noua
+                @Override
+                public int compare(Depozit o1, Depozit o2) {
+                    return o1.getTitular().getNume().compareTo(o2.getTitular().getNume());
+                }
+            });
+
+            app.printList("\n\nLista depozite sortata dupa titular: ", lista);
+
+            //Sortare dupa sucursala prin List
+            lista.sort(new Comparator<Depozit>() {
+                @Override
+                public int compare(Depozit o1, Depozit o2) {
+                    return o1.getSucursala().compareTo(o2.getSucursala());
+                }
+            });
+
+            app.printList("\n\nLista depozite sortata dupa sucursala: ", lista);
+
+            //Cautare binara dupa cod contract
+            Comparator<Depozit> comparatorCodContract = new Comparator<Depozit>() {
+                @Override
+                public int compare(Depozit o1, Depozit o2) {
+                    return Integer.compare(o1.getCodContract(), o2.getCodContract());
+                }
+            };
+            Collections.sort(lista, comparatorCodContract);
+            k = Collections.binarySearch(lista, depozit, comparatorCodContract);//intoarce indexul elementului cautat(in cazul nostru obiectul depozit)
+            //daca nu gaseste elemntul cautat, va returna -1, iar in rest, pt val >= 0, reprezinta poz din lista
+            System.out.println("\n\n");
+            if(k >= 0){
+                System.out.println("Depozitul cu codul " + depozit.getCodContract());
+                System.out.println(lista.get(k));
+            }else{
+                System.out.println("Nu exista depozitul cu codul " + depozit.getCodContract());
+                System.out.println("Pozitie de inserare " + (-k-1));
+            }
 
         }catch(Exception e){
             System.err.println(e);
