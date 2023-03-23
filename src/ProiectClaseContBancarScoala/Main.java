@@ -14,6 +14,14 @@ public class Main {
     private List<Persoana> listaClienti = new ArrayList<>(); //List - interfata, ArrayList - clasa
     private List<Depozit> listaDepozite = new ArrayList<>();
 
+    public List<Persoana> getListaClienti() {
+        return listaClienti;
+    }
+
+    public List<Depozit> getListaDepozite() {
+        return listaDepozite;
+    }
+
     public static void main(String[] args) {
 
         try{
@@ -50,7 +58,7 @@ public class Main {
 //            System.out.println(contCurent);
 
             Main app = new Main();
-            app.citireClienti();
+            app.citireClienti(System.in);
             //app.printClientList();
             for(Persoana persoana : app.clienti){ //adaugam membrii din vectorul clienti la Lista
                 app.listaClienti.add(persoana);
@@ -130,6 +138,8 @@ public class Main {
                 System.out.println("Pozitie de inserare " + (-k-1));
             }
 
+
+
         }catch(Exception e){
             System.err.println(e);
         }
@@ -149,8 +159,16 @@ public class Main {
         }
     }
 
-    public void citireClienti(){// citire din fisier csv atunci cand avem redirectat standard inputul in configuration file
-        try(Scanner scanner = new Scanner(System.in)){ //incercam sa accesam datele aflate in fisierul csv clienti, plus ca se face automat scanner.close();
+    public void citireClienti(String fisier){//citire clienti din fisier csv dand numele fisierului direct, fara redirectare inputului din configuratie
+        try(FileInputStream in = new FileInputStream(fisier)){
+            citireClienti(in);
+        }catch(Exception ex){
+            System.err.println(ex);
+        }
+    }
+
+    public void citireClienti(InputStream in){// citire din fisier csv atunci cand avem redirectat standard inputul in configuration file
+        try(Scanner scanner = new Scanner(in)){ //incercam sa accesam datele aflate in fisierul csv clienti, plus ca se face automat scanner.close();
             clienti = new Persoana[0]; //scapam de problema initializerii cu NULL implicit si se aloca o zona in heap(scapan de NullPointerException)
             while(scanner.hasNextLine()){
                 String[] t = scanner.nextLine().split(","); //preluam o linie pe care o spargen in main multe stringuri separate printr-un caracter regex ","
