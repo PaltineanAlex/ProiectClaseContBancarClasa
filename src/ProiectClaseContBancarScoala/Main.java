@@ -162,6 +162,9 @@ public class Main {
     public void citireClienti(String fisier){//citire clienti din fisier csv dand numele fisierului direct, fara redirectare inputului din configuratie
         try(FileInputStream in = new FileInputStream(fisier)){
             citireClienti(in);
+            for(Persoana persoana : clienti){
+                listaClienti.add(persoana);
+            }
         }catch(Exception ex){
             System.err.println(ex);
         }
